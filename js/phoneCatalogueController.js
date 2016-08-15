@@ -176,5 +176,17 @@ class PhonePageController {
     this._phoneViewer = new PhoneViewer({
       element: this._el.querySelector('[data-component="phoneViewer"]')
     });
+
+    this._phoneCatalogue.getElement().addEventListener('phoneSelected', function(event) {
+      alert(event.detail);
+
+      let phoneDetails = this._getPhoneById(event.detail);
+
+      //this._phoneViewer.render(phoneDetails);
+    }.bind(this));
+  }
+
+  _getPhoneById(phoneId) {
+    return {};
   }
 }
