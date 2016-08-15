@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phone Catalogue</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="app.css">
+
+  <script src="js/phoneCatalogue.js" defer></script>
+  <script src="js/phoneViewer.js" defer></script>
+  <script src="js/filter.js" defer></script>
+  <script src="js/sorter.js" defer></script>
+  <script src="js/phoneCatalogueController.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+<div class="container-fluid" id="phone-catalogue-page">
+  <div class="row">
+    <div class="col-md-2">
+      <!--Sidebar content-->
+
+      <div data-component="filter">
+        <p>
+          Search:
+          <input>
+        </p>
+      </div>
+
+      <div data-component="sorter">
+        <p>
+          Sort by:
+          <select>
+            <option value="name">Alphabetical</option>
+            <option value="age">Newest</option>
+          </select>
+        </p>
+      </div>
+
+
+    </div>
+    <div class="col-md-10">
+      <!--Body content-->
+
+      <div data-component="phoneCatalogue"></div>
+
+      <div data-component="phoneViewer"></div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  2016 year
+</footer>
+</body>
+</html>
