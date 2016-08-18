@@ -1,5 +1,11 @@
 'use strict';
 
+
+let catalogueTemplate = document.getElementById('phone-catalogue-template').innerHTML;
+let compiledCatalogueTemplate = _.template(catalogueTemplate);
+
+console.log(compiledCatalogueTemplate);
+
 class PhoneCatalogue {
   constructor(options) {
     this._el = options.element;
@@ -11,10 +17,12 @@ class PhoneCatalogue {
         return;
       }
 
+      let phoneContainer = event.target.closest('[data-element="phone"]');
+
       event.preventDefault();
 
       let customEvent = new CustomEvent('phoneSelected', {
-        detail: 'phoneId'
+        detail: phoneContainer.dataset.phoneId
       });
 
       this._el.dispatchEvent(customEvent);
@@ -25,23 +33,17 @@ class PhoneCatalogue {
     return this._el;
   }
 
+  show() {
+    this._el.classList.remove('js-hidden')
+  }
+
+  hide() {
+    this._el.classList.add('js-hidden')
+  }
+
   _render(phones) {
-    let html = '<ul class="phones">';
-
-    phones.forEach(function(phone) {
-      html += `
-        <li class="thumbnail">
-          <a href="#!/phones/${phone.id}" class="thumb" data-element="phoneLink">
-            <img alt="${phone.name}" src="${phone.imageUrl}">
-          </a>
-          <a href="#!/phones/${phone.id}" data-element="phoneLink">${phone.name}</a>
-          <p>${phone.snippet}</p>
-        </li>
-      `;
-    }.bind(this));
-
-    html += '</ul>';
-
-    this._el.innerHTML = html;
+    this._el.innerHTML = compiledCatalogueTemplate({
+      phones: phones
+    });
   }
 }

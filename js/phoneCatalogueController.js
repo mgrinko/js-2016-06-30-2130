@@ -177,16 +177,27 @@ class PhonePageController {
       element: this._el.querySelector('[data-component="phoneViewer"]')
     });
 
-    this._phoneCatalogue.getElement().addEventListener('phoneSelected', function(event) {
-      alert(event.detail);
+    this._phoneViewer.hide();
 
-      let phoneDetails = this._getPhoneById(event.detail);
-
-      //this._phoneViewer.render(phoneDetails);
-    }.bind(this));
+    this._phoneCatalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
   }
 
   _getPhoneById(phoneId) {
-    return {};
+    return defaultPhones.filter(function(phone) {
+      return phone.id === phoneId;
+    })[0];
+  }
+
+  _onPhoneSelected(event) {
+    let phoneDetails = this._getPhoneById(event.detail);
+
+    this._phoneCatalogue.hide();
+
+    this._phoneViewer.render(phoneDetails);
+    this._phoneViewer.show();
+
+
+
+
   }
 }
