@@ -195,9 +195,5 @@ class PhonePageController {
 
     this._phoneViewer.render(phoneDetails);
     this._phoneViewer.show();
-
-
-
-
   }
 }
