@@ -1,14 +1,8 @@
 'use strict';
 
-setInterval(function() {
-  let customEvent = new CustomEvent('phoneSelected', {
-    detail: 'phoneId'
-  });
+let Page = require('./page.js');
 
-  document.body.dispatchEvent(customEvent);
-}, 1000);
-
-let page = new PhonePageController({
+let page = new Page({
   element: document.getElementById('phone-catalogue-page')
 });
 

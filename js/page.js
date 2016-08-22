@@ -156,7 +156,12 @@ let defaultPhones = [
   }
 ];
 
-class PhonePageController {
+let Filter = require('./filter');
+let Sorter = require('./sorter');
+let PhoneCatalogue = require('./phoneCatalogue');
+let PhoneViewer = require('./phoneViewer');
+
+class Page {
   constructor(options) {
     this._el = options.element;
 
@@ -197,3 +202,5 @@ class PhonePageController {
     this._phoneViewer.show();
   }
 }
+
+module.exports = Page;

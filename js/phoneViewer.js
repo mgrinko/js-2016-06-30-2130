@@ -22,3 +22,5 @@ class PhoneViewer {
     });
   }
 }
+
+module.exports = PhoneViewer;

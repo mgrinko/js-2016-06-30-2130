@@ -32,7 +32,7 @@ class PhoneCatalogue {
 
     let phoneContainer = event.target.closest('[data-element="phone"]');
 
-    event.preventDefault();
+    //event.preventDefault();
 
     this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
   }
@@ -51,3 +51,5 @@ class PhoneCatalogue {
     this._el.dispatchEvent(customEvent);
   }
 }
+
+module.exports = PhoneCatalogue;
