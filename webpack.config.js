@@ -1,9 +1,16 @@
+let webpack = require('webpack');
+
 module.exports = {
   context: __dirname + '/js',
   entry: './app.js',
   output: {
     path: __dirname,
-    filename: 'build.js'
+    filename: 'build.js',
+    library: 'app'
+  },
+
+  externals: {
+    lodash: '_'
   },
 
   watch: true,
@@ -24,5 +31,14 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+
+  plugins: [
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false
+    //   }
+    // }),
+
+  ]
 };

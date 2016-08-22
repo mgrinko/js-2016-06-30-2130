@@ -1,5 +1,7 @@
 'use strict';
 
+let _ = require('lodash');
+
 let template = require('raw!../templates/phone-catalogue-template.html');
 
 class PhoneCatalogue {
