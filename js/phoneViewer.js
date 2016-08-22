@@ -1,7 +1,6 @@
 'use strict';
 
-let template = document.getElementById('phone-viewer-template').innerHTML;
-let compiledTemplate = _.template(template);
+let compiledTemplate = require('../templates/phone-viewer-template.hbs');
 
 class PhoneViewer {
   constructor(options) {

@@ -1,8 +1,9 @@
 'use strict';
 
+let template = require('raw!../templates/phone-catalogue-template.html');
+
 class PhoneCatalogue {
   constructor(options) {
-    let template = document.getElementById('phone-catalogue-template').innerHTML;
 
     this._compiledTemplate = _.template(template);
 
