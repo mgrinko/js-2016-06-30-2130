@@ -46,16 +46,11 @@
 
 	'use strict';
 	
-	let Page = __webpack_require__(1);
+	var Page = __webpack_require__(1);
 	
-	let page = new Page({
+	var page = new Page({
 	  element: document.getElementById('phone-catalogue-page')
 	});
-	
-	
-	
-	
-
 
 /***/ },
 /* 1 */
@@ -63,15 +58,21 @@
 
 	'use strict';
 	
-	let defaultPhones = __webpack_require__(2);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	let Filter = __webpack_require__(3);
-	let Sorter = __webpack_require__(4);
-	let PhoneCatalogue = __webpack_require__(5);
-	let PhoneViewer = __webpack_require__(7);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	class Page {
-	  constructor(options) {
+	var defaultPhones = __webpack_require__(2);
+	
+	var Filter = __webpack_require__(3);
+	var Sorter = __webpack_require__(4);
+	var PhoneCatalogue = __webpack_require__(5);
+	var PhoneViewer = __webpack_require__(7);
+	
+	var Page = function () {
+	  function Page(options) {
+	    _classCallCheck(this, Page);
+	
 	    this._el = options.element;
 	
 	    this._filter = new Filter({
@@ -96,21 +97,27 @@
 	    this._phoneCatalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
 	  }
 	
-	  _getPhoneById(phoneId) {
-	    return defaultPhones.filter(function(phone) {
-	      return phone.id === phoneId;
-	    })[0];
-	  }
+	  _createClass(Page, [{
+	    key: '_getPhoneById',
+	    value: function _getPhoneById(phoneId) {
+	      return defaultPhones.filter(function (phone) {
+	        return phone.id === phoneId;
+	      })[0];
+	    }
+	  }, {
+	    key: '_onPhoneSelected',
+	    value: function _onPhoneSelected(event) {
+	      var phoneDetails = this._getPhoneById(event.detail);
 	
-	  _onPhoneSelected(event) {
-	    let phoneDetails = this._getPhoneById(event.detail);
+	      this._phoneCatalogue.hide();
 	
-	    this._phoneCatalogue.hide();
+	      this._phoneViewer.render(phoneDetails);
+	      this._phoneViewer.show();
+	    }
+	  }]);
 	
-	    this._phoneViewer.render(phoneDetails);
-	    this._phoneViewer.show();
-	  }
-	}
+	  return Page;
+	}();
 	
 	module.exports = Page;
 
@@ -280,13 +287,13 @@
 
 	'use strict';
 	
-	class Filter {
-	  constructor(options) {
-	    this._el = options.element;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var Filter = function Filter(options) {
+	  _classCallCheck(this, Filter);
 	
-	  }
-	}
+	  this._el = options.element;
+	};
 	
 	module.exports = Filter;
 
@@ -296,13 +303,13 @@
 
 	'use strict';
 	
-	class Sorter {
-	  constructor(options) {
-	    this._el = options.element;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var Sorter = function Sorter(options) {
+	  _classCallCheck(this, Sorter);
 	
-	  }
-	}
+	  this._el = options.element;
+	};
 	
 	module.exports = Sorter;
 
@@ -312,10 +319,15 @@
 
 	'use strict';
 	
-	let template = __webpack_require__(6);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	class PhoneCatalogue {
-	  constructor(options) {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var template = __webpack_require__(6);
+	
+	var PhoneCatalogue = function () {
+	  function PhoneCatalogue(options) {
+	    _classCallCheck(this, PhoneCatalogue);
 	
 	    this._compiledTemplate = _.template(template);
 	
@@ -326,44 +338,54 @@
 	    this._el.addEventListener('click', this._onPhoneLinkClick.bind(this));
 	  }
 	
-	  getElement() {
-	    return this._el;
-	  }
-	
-	  show() {
-	    this._el.classList.remove('js-hidden')
-	  }
-	
-	  hide() {
-	    this._el.classList.add('js-hidden')
-	  }
-	
-	  _onPhoneLinkClick(event) {
-	    if (!event.target.closest('[data-element="phoneLink"]')) {
-	      return;
+	  _createClass(PhoneCatalogue, [{
+	    key: 'getElement',
+	    value: function getElement() {
+	      return this._el;
 	    }
+	  }, {
+	    key: 'show',
+	    value: function show() {
+	      this._el.classList.remove('js-hidden');
+	    }
+	  }, {
+	    key: 'hide',
+	    value: function hide() {
+	      this._el.classList.add('js-hidden');
+	    }
+	  }, {
+	    key: '_onPhoneLinkClick',
+	    value: function _onPhoneLinkClick(event) {
+	      if (!event.target.closest('[data-element="phoneLink"]')) {
+	        return;
+	      }
 	
-	    let phoneContainer = event.target.closest('[data-element="phone"]');
+	      var phoneContainer = event.target.closest('[data-element="phone"]');
 	
-	    //event.preventDefault();
+	      //event.preventDefault();
 	
-	    this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
-	  }
+	      this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
+	    }
+	  }, {
+	    key: '_render',
+	    value: function _render(phones) {
+	      this._el.innerHTML = this._compiledTemplate({
+	        phones: phones
+	      });
+	    }
+	  }, {
+	    key: '_triggerPhoneSelectedEvent',
+	    value: function _triggerPhoneSelectedEvent(phoneId) {
+	      var customEvent = new CustomEvent('phoneSelected', {
+	        detail: phoneId
+	      });
 	
-	  _render(phones) {
-	    this._el.innerHTML = this._compiledTemplate({
-	      phones: phones
-	    });
-	  }
+	      this._el.dispatchEvent(customEvent);
+	    }
+	  }]);
 	
-	  _triggerPhoneSelectedEvent(phoneId) {
-	    let customEvent = new CustomEvent('phoneSelected', {
-	      detail: phoneId
-	    });
-	
-	    this._el.dispatchEvent(customEvent);
-	  }
-	}
+	  return PhoneCatalogue;
+	}();
 	
 	module.exports = PhoneCatalogue;
 
@@ -379,27 +401,40 @@
 
 	'use strict';
 	
-	let compiledTemplate = __webpack_require__(8);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	class PhoneViewer {
-	  constructor(options) {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var compiledTemplate = __webpack_require__(8);
+	
+	var PhoneViewer = function () {
+	  function PhoneViewer(options) {
+	    _classCallCheck(this, PhoneViewer);
+	
 	    this._el = options.element;
 	  }
 	
-	  show() {
-	    this._el.classList.remove('js-hidden')
-	  }
+	  _createClass(PhoneViewer, [{
+	    key: 'show',
+	    value: function show() {
+	      this._el.classList.remove('js-hidden');
+	    }
+	  }, {
+	    key: 'hide',
+	    value: function hide() {
+	      this._el.classList.add('js-hidden');
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render(phone) {
+	      this._el.innerHTML = compiledTemplate({
+	        phone: phone
+	      });
+	    }
+	  }]);
 	
-	  hide() {
-	    this._el.classList.add('js-hidden')
-	  }
-	
-	  render(phone) {
-	    this._el.innerHTML = compiledTemplate({
-	      phone: phone
-	    });
-	  }
-	}
+	  return PhoneViewer;
+	}();
 	
 	module.exports = PhoneViewer;
 
