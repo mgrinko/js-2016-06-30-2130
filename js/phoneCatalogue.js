@@ -1,26 +1,14 @@
 'use strict';
 
-let _ = require('lodash');
+const BaseComponent = require('./baseComponent');
 
 let compiledTemplate = require('../templates/phone-catalogue-template.hbs');
 
-class PhoneCatalogue {
+class PhoneCatalogue extends BaseComponent {
   constructor(options) {
-    this._el = options.element;
+    super(options.element);
 
-    this._el.addEventListener('click', this._onPhoneLinkClick.bind(this));
-  }
-
-  getElement() {
-    return this._el;
-  }
-
-  show() {
-    this._el.classList.remove('js-hidden')
-  }
-
-  hide() {
-    this._el.classList.add('js-hidden')
+    this.on('click', this._onPhoneLinkClick.bind(this), '[data-element="phoneLink"]');
   }
 
   render(phones) {
@@ -30,23 +18,9 @@ class PhoneCatalogue {
   }
 
   _onPhoneLinkClick(event) {
-    if (!event.target.closest('[data-element="phoneLink"]')) {
-      return;
-    }
-
     let phoneContainer = event.target.closest('[data-element="phone"]');
 
-    //event.preventDefault();
-
-    this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
-  }
-
-  _triggerPhoneSelectedEvent(phoneId) {
-    let customEvent = new CustomEvent('phoneSelected', {
-      detail: phoneId
-    });
-
-    this._el.dispatchEvent(customEvent);
+    this.trigger('phoneSelected', phoneContainer.dataset.phoneId);
   }
 }
 
