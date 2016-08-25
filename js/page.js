@@ -1,7 +1,5 @@
 'use strict';
 
-let defaultPhones = require('json!../phones/phones.json');
-
 let Filter = require('./filter');
 let Sorter = require('./sorter');
 let PhoneCatalogue = require('./phoneCatalogue');
@@ -35,7 +33,17 @@ class Page {
   }
 
   _getPhones() {
-    return defaultPhones;
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('GET', '/data/phones.json', false);
+
+    xhr.send();
+
+    if (xhr.status != 200) {
+      console.error( xhr.status + ': ' + xhr.statusText );
+    } else {
+      return JSON.parse(xhr.responseText);
+    }
   }
 
   _getPhoneById(phoneId) {
