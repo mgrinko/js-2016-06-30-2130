@@ -98,40 +98,65 @@ var app =
 	  }
 	
 	  _createClass(Page, [{
+	    key: '_onPhoneSelected',
+	    value: function _onPhoneSelected(event) {
+	      var phoneId = event.detail;
+	
+	      this._loadPhoneById(phoneId);
+	    }
+	  }, {
 	    key: '_loadPhones',
 	    value: function _loadPhones() {
+	      this._ajax('/data/phones.json', {
+	        success: function (phones) {
+	          this._catalogue.render(phones);
+	        }.bind(this),
+	
+	        error: function (error) {
+	          console.error(error);
+	        }.bind(this)
+	      });
+	    }
+	  }, {
+	    key: '_loadPhoneById',
+	    value: function _loadPhoneById(phoneId) {
+	      this._ajax('/data/' + phoneId + '.json', {
+	        method: 'GET',
+	
+	        success: function (phoneDetails) {
+	          this._catalogue.hide();
+	
+	          this._viewer.render(phoneDetails);
+	          this._viewer.show();
+	        }.bind(this),
+	
+	        error: function (error) {
+	          console.error(error);
+	        }.bind(this)
+	      });
+	    }
+	  }, {
+	    key: '_ajax',
+	    value: function _ajax(url, options) {
 	      var xhr = new XMLHttpRequest();
 	
-	      xhr.open('GET', '/data/phones.json', true);
-	
-	      xhr.send();
+	      xhr.open(options.method || 'GET', url, true);
 	
 	      xhr.onload = function () {
 	        if (xhr.status != 200) {
-	          console.error(xhr.status + ': ' + xhr.statusText);
+	          options.error(xhr.status + ': ' + xhr.statusText);
 	        } else {
-	          var phones = JSON.parse(xhr.responseText);
+	          var response = JSON.parse(xhr.responseText);
 	
-	          this._catalogue.render(phones);
+	          options.success(response);
 	        }
 	      }.bind(this);
-	    }
-	  }, {
-	    key: '_getPhoneById',
-	    value: function _getPhoneById(phoneId) {
-	      return defaultPhones.filter(function (phone) {
-	        return phone.id === phoneId;
-	      })[0];
-	    }
-	  }, {
-	    key: '_onPhoneSelected',
-	    value: function _onPhoneSelected(event) {
-	      var phoneDetails = this._getPhoneById(event.detail);
 	
-	      this._catalogue.hide();
+	      xhr.onerror = function () {
+	        options.error(xhr.status + ': ' + xhr.statusText);
+	      };
 	
-	      this._viewer.render(phoneDetails);
-	      this._viewer.show();
+	      xhr.send();
 	    }
 	  }]);
 	
@@ -18258,18 +18283,22 @@ var app =
 
 	var Handlebars = __webpack_require__(8);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return "  <li>\n    <img src=\""
+	    + container.escapeExpression(container.lambda(depth0, depth0))
+	    + "\">\n  </li>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, alias1=container.lambda;
 	
 	  return "<img class=\"phone\" src=\""
-	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.imageUrl : stack1), depth0))
+	    + container.escapeExpression(alias1(((stack1 = ((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.images : stack1)) != null ? stack1["0"] : stack1), depth0))
 	    + "\">\n\n<h1>"
 	    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.name : stack1), depth0)) != null ? stack1 : "")
 	    + "</h1>\n\n<p>"
-	    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.snippet : stack1), depth0)) != null ? stack1 : "")
-	    + "</p>\n\n<ul class=\"phone-thumbs\">\n  <li>\n    <img src=\""
-	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.imageUrl : stack1), depth0))
-	    + "\">\n  </li>\n</ul>";
+	    + ((stack1 = alias1(((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.description : stack1), depth0)) != null ? stack1 : "")
+	    + "</p>\n\n<ul class=\"phone-thumbs\">\n"
+	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.images : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "</ul>";
 	},"useData":true});
 
 /***/ }

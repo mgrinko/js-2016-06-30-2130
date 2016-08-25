@@ -32,37 +32,61 @@ class Page {
     this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
   }
 
+  _onPhoneSelected(event) {
+    let phoneId = event.detail;
+
+    this._loadPhoneById(phoneId);
+  }
+
   _loadPhones() {
+    this._ajax('/data/phones.json', {
+      success: function(phones) {
+        this._catalogue.render(phones);
+      }.bind(this),
+
+      error: function(error) {
+        console.error(error);
+      }.bind(this)
+    });
+  }
+
+  _loadPhoneById(phoneId) {
+    this._ajax(`/data/${phoneId}.json`, {
+      method: 'GET',
+
+      success: function(phoneDetails) {
+        this._catalogue.hide();
+
+        this._viewer.render(phoneDetails);
+        this._viewer.show();
+      }.bind(this),
+
+      error: function(error) {
+        console.error(error);
+      }.bind(this)
+    });
+  }
+
+  _ajax(url, options) {
     var xhr = new XMLHttpRequest();
 
-    xhr.open('GET', '/data/phones.json', true);
-
-    xhr.send();
+    xhr.open(options.method || 'GET', url, true);
 
     xhr.onload = function() {
       if (xhr.status != 200) {
-        console.error( xhr.status + ': ' + xhr.statusText );
+        options.error( xhr.status + ': ' + xhr.statusText );
       } else {
-        let phones = JSON.parse(xhr.responseText);
+        let response = JSON.parse(xhr.responseText);
 
-        this._catalogue.render(phones);
+        options.success(response);
       }
     }.bind(this);
-  }
 
-  _getPhoneById(phoneId) {
-    return defaultPhones.filter(function(phone) {
-      return phone.id === phoneId;
-    })[0];
-  }
+    xhr.onerror = function() {
+      options.error( xhr.status + ': ' + xhr.statusText );
+    };
 
-  _onPhoneSelected(event) {
-    let phoneDetails = this._getPhoneById(event.detail);
-
-    this._catalogue.hide();
-
-    this._viewer.render(phoneDetails);
-    this._viewer.show();
+    xhr.send();
   }
 }
 

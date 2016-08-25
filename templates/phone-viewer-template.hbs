@@ -1,11 +1,13 @@
-<img class="phone" src="{{phone.imageUrl}}">
+<img class="phone" src="{{phone.images.[0]}}">
 
 <h1>{{{phone.name}}}</h1>
 
-<p>{{{phone.snippet}}}</p>
+<p>{{{phone.description}}}</p>
 
 <ul class="phone-thumbs">
+  {{#each phone.images }}
   <li>
-    <img src="{{phone.imageUrl}}">
+    <img src="{{this}}">
   </li>
+  {{/each}}
 </ul>
