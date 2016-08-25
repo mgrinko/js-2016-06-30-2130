@@ -1,9 +1,11 @@
 'use strict';
 
-let Filter = require('./filter');
-let Sorter = require('./sorter');
-let PhoneCatalogue = require('./phoneCatalogue');
-let PhoneViewer = require('./phoneViewer');
+const AjaxService = require('./ajaxService');
+
+const Filter = require('./filter');
+const Sorter = require('./sorter');
+const PhoneCatalogue = require('./phoneCatalogue');
+const PhoneViewer = require('./phoneViewer');
 
 class Page {
   constructor(options) {
@@ -30,6 +32,7 @@ class Page {
     this._viewer.hide();
 
     this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
+    this._filter.getElement().addEventListener('filterChanged', this._onFilterChanged.bind(this));
   }
 
   _onPhoneSelected(event) {
@@ -38,9 +41,31 @@ class Page {
     this._loadPhoneById(phoneId);
   }
 
-  _loadPhones() {
-    this._ajax('/data/phones.json', {
+  _onFilterChanged(event) {
+    let query = event.detail;
+
+    this._loadPhones(query);
+  }
+
+  _loadPhones(query) {
+    let url = '/data/phones.json';
+
+    if (query) {
+      url += '?query=' + query;
+    }
+
+    AjaxService.loadJSON(url, {
       success: function(phones) {
+
+        // should be removed after server fix
+        if (query) {
+          let pattern = query.toLowerCase();
+
+          phones = phones.filter(function(phone) {
+            return phone.name.toLowerCase().includes(pattern);
+          });
+        }
+
         this._catalogue.render(phones);
       }.bind(this),
 
@@ -51,7 +76,7 @@ class Page {
   }
 
   _loadPhoneById(phoneId) {
-    this._ajax(`/data/${phoneId}.json`, {
+    AjaxService.loadJSON(`/data/${phoneId}.json`, {
       method: 'GET',
 
       success: function(phoneDetails) {
@@ -65,28 +90,6 @@ class Page {
         console.error(error);
       }.bind(this)
     });
-  }
-
-  _ajax(url, options) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.open(options.method || 'GET', url, true);
-
-    xhr.onload = function() {
-      if (xhr.status != 200) {
-        options.error( xhr.status + ': ' + xhr.statusText );
-      } else {
-        let response = JSON.parse(xhr.responseText);
-
-        options.success(response);
-      }
-    }.bind(this);
-
-    xhr.onerror = function() {
-      options.error( xhr.status + ': ' + xhr.statusText );
-    };
-
-    xhr.send();
   }
 }
 

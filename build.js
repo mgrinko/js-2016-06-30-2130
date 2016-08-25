@@ -63,6 +63,8 @@ var app =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var AjaxService = __webpack_require__(29);
+	
 	var Filter = __webpack_require__(2);
 	var Sorter = __webpack_require__(3);
 	var PhoneCatalogue = __webpack_require__(4);
@@ -95,6 +97,7 @@ var app =
 	    this._viewer.hide();
 	
 	    this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
+	    this._filter.getElement().addEventListener('filterChanged', this._onFilterChanged.bind(this));
 	  }
 	
 	  _createClass(Page, [{
@@ -105,10 +108,35 @@ var app =
 	      this._loadPhoneById(phoneId);
 	    }
 	  }, {
+	    key: '_onFilterChanged',
+	    value: function _onFilterChanged(event) {
+	      var query = event.detail;
+	
+	      this._loadPhones(query);
+	    }
+	  }, {
 	    key: '_loadPhones',
-	    value: function _loadPhones() {
-	      this._ajax('/data/phones.json', {
+	    value: function _loadPhones(query) {
+	      var url = '/data/phones.json';
+	
+	      if (query) {
+	        url += '?query=' + query;
+	      }
+	
+	      AjaxService.loadJSON(url, {
 	        success: function (phones) {
+	
+	          // should be removed after server fix
+	          if (query) {
+	            (function () {
+	              var pattern = query.toLowerCase();
+	
+	              phones = phones.filter(function (phone) {
+	                return phone.name.toLowerCase().includes(pattern);
+	              });
+	            })();
+	          }
+	
 	          this._catalogue.render(phones);
 	        }.bind(this),
 	
@@ -120,7 +148,7 @@ var app =
 	  }, {
 	    key: '_loadPhoneById',
 	    value: function _loadPhoneById(phoneId) {
-	      this._ajax('/data/' + phoneId + '.json', {
+	      AjaxService.loadJSON('/data/' + phoneId + '.json', {
 	        method: 'GET',
 	
 	        success: function (phoneDetails) {
@@ -135,29 +163,6 @@ var app =
 	        }.bind(this)
 	      });
 	    }
-	  }, {
-	    key: '_ajax',
-	    value: function _ajax(url, options) {
-	      var xhr = new XMLHttpRequest();
-	
-	      xhr.open(options.method || 'GET', url, true);
-	
-	      xhr.onload = function () {
-	        if (xhr.status != 200) {
-	          options.error(xhr.status + ': ' + xhr.statusText);
-	        } else {
-	          var response = JSON.parse(xhr.responseText);
-	
-	          options.success(response);
-	        }
-	      }.bind(this);
-	
-	      xhr.onerror = function () {
-	        options.error(xhr.status + ': ' + xhr.statusText);
-	      };
-	
-	      xhr.send();
-	    }
 	  }]);
 	
 	  return Page;
@@ -171,13 +176,39 @@ var app =
 
 	'use strict';
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Filter = function Filter(options) {
-	  _classCallCheck(this, Filter);
+	var Filter = function () {
+	  function Filter(options) {
+	    _classCallCheck(this, Filter);
 	
-	  this._el = options.element;
-	};
+	    this._el = options.element;
+	
+	    this._field = this._el.querySelector('[data-element="field"]');
+	
+	    this._field.oninput = this._onFieldChange.bind(this);
+	  }
+	
+	  _createClass(Filter, [{
+	    key: 'getElement',
+	    value: function getElement() {
+	      return this._el;
+	    }
+	  }, {
+	    key: '_onFieldChange',
+	    value: function _onFieldChange() {
+	      var customEvent = new CustomEvent('filterChanged', {
+	        detail: this._field.value
+	      });
+	
+	      this._el.dispatchEvent(customEvent);
+	    }
+	  }]);
+	
+	  return Filter;
+	}();
 	
 	module.exports = Filter;
 
@@ -18300,6 +18331,36 @@ var app =
 	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.images : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "</ul>";
 	},"useData":true});
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
+	  loadJSON: function loadJSON(url, options) {
+	    var xhr = new XMLHttpRequest();
+	
+	    xhr.open(options.method || 'GET', url, true);
+	
+	    xhr.onload = function () {
+	      if (xhr.status != 200) {
+	        options.error(xhr.status + ': ' + xhr.statusText);
+	      } else {
+	        var response = JSON.parse(xhr.responseText);
+	
+	        options.success(response);
+	      }
+	    };
+	
+	    xhr.onerror = function () {
+	      options.error(xhr.status + ': ' + xhr.statusText);
+	    };
+	
+	    xhr.send();
+	  }
+	};
 
 /***/ }
 /******/ ]);
