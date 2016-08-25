@@ -9,10 +9,6 @@ module.exports = {
     library: 'app'
   },
 
-  externals: {
-    lodash: '_'
-  },
-
   watch: true,
   devtool: 'source-map',
 

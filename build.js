@@ -84,21 +84,27 @@ var app =
 	      element: this._el.querySelector('[data-component="sorter"]')
 	    });
 	
-	    this._phoneCatalogue = new PhoneCatalogue({
-	      element: this._el.querySelector('[data-component="phoneCatalogue"]'),
-	      phones: defaultPhones
+	    this._catalogue = new PhoneCatalogue({
+	      element: this._el.querySelector('[data-component="phoneCatalogue"]')
 	    });
 	
-	    this._phoneViewer = new PhoneViewer({
+	    this.render(this._getPhones());
+	
+	    this._viewer = new PhoneViewer({
 	      element: this._el.querySelector('[data-component="phoneViewer"]')
 	    });
 	
-	    this._phoneViewer.hide();
+	    this._viewer.hide();
 	
-	    this._phoneCatalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
+	    this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
 	  }
 	
 	  _createClass(Page, [{
+	    key: '_getPhones',
+	    value: function _getPhones() {
+	      return defaultPhones;
+	    }
+	  }, {
 	    key: '_getPhoneById',
 	    value: function _getPhoneById(phoneId) {
 	      return defaultPhones.filter(function (phone) {
@@ -110,10 +116,10 @@ var app =
 	    value: function _onPhoneSelected(event) {
 	      var phoneDetails = this._getPhoneById(event.detail);
 	
-	      this._phoneCatalogue.hide();
+	      this._catalogue.hide();
 	
-	      this._phoneViewer.render(phoneDetails);
-	      this._phoneViewer.show();
+	      this._viewer.render(phoneDetails);
+	      this._viewer.show();
 	    }
 	  }]);
 	
@@ -336,8 +342,6 @@ var app =
 	
 	    this._el = options.element;
 	
-	    this._render(options.phones);
-	
 	    this._el.addEventListener('click', this._onPhoneLinkClick.bind(this));
 	  }
 	
@@ -357,6 +361,13 @@ var app =
 	      this._el.classList.add('js-hidden');
 	    }
 	  }, {
+	    key: 'render',
+	    value: function render(phones) {
+	      this._el.innerHTML = this._compiledTemplate({
+	        phones: phones
+	      });
+	    }
+	  }, {
 	    key: '_onPhoneLinkClick',
 	    value: function _onPhoneLinkClick(event) {
 	      if (!event.target.closest('[data-element="phoneLink"]')) {
@@ -368,13 +379,6 @@ var app =
 	      //event.preventDefault();
 	
 	      this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
-	    }
-	  }, {
-	    key: '_render',
-	    value: function _render(phones) {
-	      this._el.innerHTML = this._compiledTemplate({
-	        phones: phones
-	      });
 	    }
 	  }, {
 	    key: '_triggerPhoneSelectedEvent',
@@ -402,7 +406,7 @@ var app =
 /* 7 */
 /***/ function(module, exports) {
 
-	module.exports = "<ul class=\"phones\">\n\n  <% phones.forEach(function(phone) { %>\n  <li class=\"thumbnail\" data-element=\"phone\" data-phone-id=\"<%=phone.id%>\">\n    <a href=\"#!/phones/<%=phone.id%>\" class=\"thumb\" data-element=\"phoneLink\">\n      <img alt=\"<%-phone.name%>\" src=\"<%=phone.imageUrl%>\">\n    </a>\n    <a href=\"#!/phones/<%=phone.id%>\" data-element=\"phoneLink\"><%-phone.name%></a>\n    <p><%-phone.snippet%></p>\n  </li>\n  <% }.bind(this)); %>\n\n</ul>"
+	module.exports = "<ul class=\"phones\">123123\n\n  <% phones.forEach(function(phone) { %>\n  <li class=\"thumbnail\" data-element=\"phone\" data-phone-id=\"<%=phone.id%>\">\n    <a href=\"#!/phones/<%=phone.id%>\" class=\"thumb\" data-element=\"phoneLink\">\n      <img alt=\"<%-phone.name%>\" src=\"<%=phone.imageUrl%>\">\n    </a>\n    <a href=\"#!/phones/<%=phone.id%>\" data-element=\"phoneLink\"><%-phone.name%></a>\n    <p><%-phone.snippet%></p>\n  </li>\n  <% }.bind(this)); %>\n\n</ul>"
 
 /***/ },
 /* 8 */

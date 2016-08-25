@@ -19,18 +19,23 @@ class Page {
       element: this._el.querySelector('[data-component="sorter"]')
     });
 
-    this._phoneCatalogue = new PhoneCatalogue({
+    this._catalogue = new PhoneCatalogue({
       element: this._el.querySelector('[data-component="phoneCatalogue"]'),
-      phones: defaultPhones
     });
 
-    this._phoneViewer = new PhoneViewer({
+    this._catalogue.render(this._getPhones());
+
+    this._viewer = new PhoneViewer({
       element: this._el.querySelector('[data-component="phoneViewer"]')
     });
 
-    this._phoneViewer.hide();
+    this._viewer.hide();
 
-    this._phoneCatalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
+    this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
+  }
+
+  _getPhones() {
+    return defaultPhones;
   }
 
   _getPhoneById(phoneId) {
@@ -42,10 +47,10 @@ class Page {
   _onPhoneSelected(event) {
     let phoneDetails = this._getPhoneById(event.detail);
 
-    this._phoneCatalogue.hide();
+    this._catalogue.hide();
 
-    this._phoneViewer.render(phoneDetails);
-    this._phoneViewer.show();
+    this._viewer.render(phoneDetails);
+    this._viewer.show();
   }
 }
 

@@ -2,16 +2,11 @@
 
 let _ = require('lodash');
 
-let template = require('raw!../templates/phone-catalogue-template.html');
+let compiledTemplate = require('../templates/phone-catalogue-template.hbs');
 
 class PhoneCatalogue {
   constructor(options) {
-
-    this._compiledTemplate = _.template(template);
-
     this._el = options.element;
-
-    this._render(options.phones);
 
     this._el.addEventListener('click', this._onPhoneLinkClick.bind(this));
   }
@@ -28,6 +23,12 @@ class PhoneCatalogue {
     this._el.classList.add('js-hidden')
   }
 
+  render(phones) {
+    this._el.innerHTML = compiledTemplate({
+      phones: phones
+    });
+  }
+
   _onPhoneLinkClick(event) {
     if (!event.target.closest('[data-element="phoneLink"]')) {
       return;
@@ -38,12 +39,6 @@ class PhoneCatalogue {
     //event.preventDefault();
 
     this._triggerPhoneSelectedEvent(phoneContainer.dataset.phoneId);
-  }
-
-  _render(phones) {
-    this._el.innerHTML = this._compiledTemplate({
-      phones: phones
-    });
   }
 
   _triggerPhoneSelectedEvent(phoneId) {
