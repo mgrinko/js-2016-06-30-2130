@@ -21,7 +21,7 @@ class Page {
       element: this._el.querySelector('[data-component="phoneCatalogue"]'),
     });
 
-    this._catalogue.render(this._getPhones());
+    this._loadPhones();
 
     this._viewer = new PhoneViewer({
       element: this._el.querySelector('[data-component="phoneViewer"]')
@@ -32,18 +32,22 @@ class Page {
     this._catalogue.getElement().addEventListener('phoneSelected', this._onPhoneSelected.bind(this));
   }
 
-  _getPhones() {
+  _loadPhones() {
     var xhr = new XMLHttpRequest();
 
-    xhr.open('GET', '/data/phones.json', false);
+    xhr.open('GET', '/data/phones.json', true);
 
     xhr.send();
 
-    if (xhr.status != 200) {
-      console.error( xhr.status + ': ' + xhr.statusText );
-    } else {
-      return JSON.parse(xhr.responseText);
-    }
+    xhr.onload = function() {
+      if (xhr.status != 200) {
+        console.error( xhr.status + ': ' + xhr.statusText );
+      } else {
+        let phones = JSON.parse(xhr.responseText);
+
+        this._catalogue.render(phones);
+      }
+    }.bind(this);
   }
 
   _getPhoneById(phoneId) {
