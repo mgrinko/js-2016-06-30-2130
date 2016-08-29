@@ -66,6 +66,16 @@ class Page {
       }.bind(this))
 
       .catch(this._onError.bind(this));
+
+    // confirmationPromise
+    //   .then(function() {
+    //     return loadPhonePromise;
+    //   })
+    //   .then(function(result) {
+    //     this._showPhone(result);
+    //
+    //     this._confirmation.hide();
+    //   });
   }
 
   _getConfirmationPromise() {
