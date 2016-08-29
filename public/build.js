@@ -63,11 +63,11 @@ var app =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var AjaxService = __webpack_require__(29);
+	var AjaxService = __webpack_require__(2);
 	
-	var Filter = __webpack_require__(2);
-	var Sorter = __webpack_require__(3);
-	var PhoneCatalogue = __webpack_require__(4);
+	var Filter = __webpack_require__(3);
+	var Sorter = __webpack_require__(5);
+	var PhoneCatalogue = __webpack_require__(6);
 	var PhoneViewer = __webpack_require__(27);
 	
 	var Page = function () {
@@ -172,6 +172,36 @@ var app =
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
+	  loadJSON: function loadJSON(url, options) {
+	    var xhr = new XMLHttpRequest();
+	
+	    xhr.open(options.method || 'GET', url, true);
+	
+	    xhr.onload = function () {
+	      if (xhr.status != 200) {
+	        options.error(xhr.status + ': ' + xhr.statusText);
+	      } else {
+	        var response = JSON.parse(xhr.responseText);
+	
+	        options.success(response);
+	      }
+	    };
+	
+	    xhr.onerror = function () {
+	      options.error(xhr.status + ': ' + xhr.statusText);
+	    };
+	
+	    xhr.send();
+	  }
+	};
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -184,7 +214,7 @@ var app =
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var BaseComponent = __webpack_require__(30);
+	var BaseComponent = __webpack_require__(4);
 	
 	var Filter = function (_BaseComponent) {
 	  _inherits(Filter, _BaseComponent);
@@ -213,7 +243,70 @@ var app =
 	module.exports = Filter;
 
 /***/ },
-/* 3 */
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var BaseComponent = function () {
+	  function BaseComponent(element) {
+	    _classCallCheck(this, BaseComponent);
+	
+	    this._el = element;
+	  }
+	
+	  _createClass(BaseComponent, [{
+	    key: 'getElement',
+	    value: function getElement() {
+	      return this._el;
+	    }
+	  }, {
+	    key: 'show',
+	    value: function show() {
+	      this._el.classList.remove('js-hidden');
+	    }
+	  }, {
+	    key: 'hide',
+	    value: function hide() {
+	      this._el.classList.add('js-hidden');
+	    }
+	  }, {
+	    key: 'on',
+	    value: function on(eventName, handler, selector) {
+	      this._el.addEventListener(eventName, function (event) {
+	        if (selector) {
+	          var closest = event.target.closest(selector);
+	
+	          if (!closest || !this._el.contains(closest)) {
+	            return;
+	          }
+	        }
+	
+	        handler(event);
+	      }.bind(this));
+	    }
+	  }, {
+	    key: 'trigger',
+	    value: function trigger(eventName, data) {
+	      var customEvent = new CustomEvent(eventName, {
+	        detail: data
+	      });
+	
+	      this._el.dispatchEvent(customEvent);
+	    }
+	  }]);
+	
+	  return BaseComponent;
+	}();
+	
+	module.exports = BaseComponent;
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -229,7 +322,7 @@ var app =
 	module.exports = Sorter;
 
 /***/ },
-/* 4 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -242,7 +335,7 @@ var app =
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var BaseComponent = __webpack_require__(30);
+	var BaseComponent = __webpack_require__(4);
 	
 	var compiledTemplate = __webpack_require__(7);
 	
@@ -280,8 +373,6 @@ var app =
 	module.exports = PhoneCatalogue;
 
 /***/ },
-/* 5 */,
-/* 6 */,
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1502,7 +1593,7 @@ var app =
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var BaseComponent = __webpack_require__(30);
+	var BaseComponent = __webpack_require__(4);
 	
 	var compiledTemplate = __webpack_require__(28);
 	
@@ -1552,99 +1643,6 @@ var app =
 	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.images : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "</ul>";
 	},"useData":true});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	module.exports = {
-	  loadJSON: function loadJSON(url, options) {
-	    var xhr = new XMLHttpRequest();
-	
-	    xhr.open(options.method || 'GET', url, true);
-	
-	    xhr.onload = function () {
-	      if (xhr.status != 200) {
-	        options.error(xhr.status + ': ' + xhr.statusText);
-	      } else {
-	        var response = JSON.parse(xhr.responseText);
-	
-	        options.success(response);
-	      }
-	    };
-	
-	    xhr.onerror = function () {
-	      options.error(xhr.status + ': ' + xhr.statusText);
-	    };
-	
-	    xhr.send();
-	  }
-	};
-
-/***/ },
-/* 30 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var BaseComponent = function () {
-	  function BaseComponent(element) {
-	    _classCallCheck(this, BaseComponent);
-	
-	    this._el = element;
-	  }
-	
-	  _createClass(BaseComponent, [{
-	    key: 'getElement',
-	    value: function getElement() {
-	      return this._el;
-	    }
-	  }, {
-	    key: 'show',
-	    value: function show() {
-	      this._el.classList.remove('js-hidden');
-	    }
-	  }, {
-	    key: 'hide',
-	    value: function hide() {
-	      this._el.classList.add('js-hidden');
-	    }
-	  }, {
-	    key: 'on',
-	    value: function on(eventName, handler, selector) {
-	      this._el.addEventListener(eventName, function (event) {
-	        if (selector) {
-	          var closest = event.target.closest(selector);
-	
-	          if (!closest || !this._el.contains(closest)) {
-	            return;
-	          }
-	        }
-	
-	        handler(event);
-	      }.bind(this));
-	    }
-	  }, {
-	    key: 'trigger',
-	    value: function trigger(eventName, data) {
-	      var customEvent = new CustomEvent(eventName, {
-	        detail: data
-	      });
-	
-	      this._el.dispatchEvent(customEvent);
-	    }
-	  }]);
-	
-	  return BaseComponent;
-	}();
-	
-	module.exports = BaseComponent;
 
 /***/ }
 /******/ ]);
