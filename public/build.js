@@ -116,7 +116,7 @@ var app =
 	    value: function _onPhoneSelected(event) {
 	      var phoneId = event.detail;
 	
-	      this._loadPhoneById(phoneId);
+	      this._loadPhoneById(phoneId).then(this._onPhoneLoaded.bind(this)).catch(this._onError.bind(this));
 	
 	      this._confirmation.show();
 	
@@ -156,11 +156,7 @@ var app =
 	  }, {
 	    key: '_loadPhoneById',
 	    value: function _loadPhoneById(phoneId) {
-	      AjaxService.loadJSON('/data/' + phoneId + '.json', {
-	        method: 'GET',
-	        success: this._onPhoneLoaded.bind(this),
-	        error: this._onError.bind(this)
-	      });
+	      return AjaxService.loadJSON('/data/' + phoneId + '.json');
 	    }
 	  }, {
 	    key: '_onError',
@@ -183,28 +179,24 @@ var app =
 	        url += '?query=' + query;
 	      }
 	
-	      AjaxService.loadJSON(url, {
-	        success: function (phones) {
+	      AjaxService.loadJSON(url).then(function (phones) {
 	
-	          // should be removed after server fix
-	          if (query) {
-	            (function () {
-	              var pattern = query.toLowerCase();
+	        // should be removed after server fix
+	        if (query) {
+	          (function () {
+	            var pattern = query.toLowerCase();
 	
-	              phones = phones.filter(function (phone) {
-	                return phone.name.toLowerCase().includes(pattern);
-	              });
-	            })();
-	          }
+	            phones = phones.filter(function (phone) {
+	              return phone.name.toLowerCase().includes(pattern);
+	            });
+	          })();
+	        }
 	
-	          this._catalogue.render(phones);
-	          this._catalogue.show();
+	        this._catalogue.render(phones);
+	        this._catalogue.show();
 	
-	          this._viewer.hide();
-	        }.bind(this),
-	
-	        error: this._onError.bind(this)
-	      });
+	        this._viewer.hide();
+	      }.bind(this)).catch(this._onError.bind(this));
 	    }
 	  }]);
 	
@@ -221,25 +213,31 @@ var app =
 	
 	module.exports = {
 	  loadJSON: function loadJSON(url, options) {
-	    var xhr = new XMLHttpRequest();
+	    return new Promise(function (resolve, reject) {
+	      var xhr = new XMLHttpRequest();
 	
-	    xhr.open(options.method || 'GET', url, true);
+	      options = options || {};
 	
-	    xhr.onload = function () {
-	      if (xhr.status != 200) {
-	        options.error(xhr.status + ': ' + xhr.statusText);
-	      } else {
-	        var response = JSON.parse(xhr.responseText);
+	      var method = options.method || 'GET';
 	
-	        options.success(response);
-	      }
-	    };
+	      xhr.open(method, url, true);
 	
-	    xhr.onerror = function () {
-	      options.error(xhr.status + ': ' + xhr.statusText);
-	    };
+	      xhr.onload = function () {
+	        if (xhr.status !== 200) {
+	          reject(xhr.status + ': ' + xhr.statusText);
+	        } else {
+	          var response = JSON.parse(xhr.responseText);
 	
-	    xhr.send();
+	          resolve(response);
+	        }
+	      };
+	
+	      xhr.onerror = function () {
+	        reject(xhr.status + ': ' + xhr.statusText);
+	      };
+	
+	      xhr.send();
+	    });
 	  }
 	};
 

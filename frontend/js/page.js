@@ -50,7 +50,9 @@ class Page {
   _onPhoneSelected(event) {
     let phoneId = event.detail;
 
-    this._loadPhoneById(phoneId);
+    this._loadPhoneById(phoneId)
+      .then(this._onPhoneLoaded.bind(this))
+      .catch(this._onError.bind(this));
 
     this._confirmation.show();
 
@@ -87,11 +89,7 @@ class Page {
   }
 
   _loadPhoneById(phoneId) {
-    AjaxService.loadJSON(`/data/${phoneId}.json`, {
-      method: 'GET',
-      success: this._onPhoneLoaded.bind(this),
-      error: this._onError.bind(this)
-    });
+    return AjaxService.loadJSON(`/data/${phoneId}.json`);
   }
 
   _onError(error) {
@@ -111,8 +109,8 @@ class Page {
       url += '?query=' + query;
     }
 
-    AjaxService.loadJSON(url, {
-      success: function(phones) {
+    AjaxService.loadJSON(url)
+      .then(function(phones) {
 
         // should be removed after server fix
         if (query) {
@@ -127,10 +125,9 @@ class Page {
         this._catalogue.show();
 
         this._viewer.hide();
-      }.bind(this),
+      }.bind(this))
 
-      error: this._onError.bind(this)
-    });
+      .catch(this._onError.bind(this));
   }
 }
 
