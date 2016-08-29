@@ -6,6 +6,7 @@ const Filter = require('./filter');
 const Sorter = require('./sorter');
 const PhoneCatalogue = require('./phoneCatalogue');
 const PhoneViewer = require('./phoneViewer');
+const Confirmation = require('./confirmation');
 
 class Page {
   constructor(options) {
@@ -17,6 +18,10 @@ class Page {
 
     this._sorter = new Sorter({
       element: this._el.querySelector('[data-component="sorter"]')
+    });
+
+    this._confirmation = new Confirmation({
+      element: this._el.querySelector('[data-component="confirmation"]')
     });
 
     this._catalogue = new PhoneCatalogue({
@@ -34,17 +39,23 @@ class Page {
 
 
     this._loadPhones();
-
   }
 
   _onBackFromViewer() {
-    this._loadPhones();
+    let query = this._filter.getValue();
+
+    this._loadPhones(query);
   }
 
   _onPhoneSelected(event) {
     let phoneId = event.detail;
 
-    this._loadPhoneById(phoneId);
+    this._confirmation.show();
+    this._confirmation.on('submit', function() {
+      this._loadPhoneById(phoneId);
+
+      this._confirmation.hide();
+    }.bind(this));
   }
 
   _onFilterChanged(event) {

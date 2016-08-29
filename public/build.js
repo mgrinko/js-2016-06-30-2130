@@ -69,6 +69,7 @@ var app =
 	var Sorter = __webpack_require__(5);
 	var PhoneCatalogue = __webpack_require__(6);
 	var PhoneViewer = __webpack_require__(27);
+	var Confirmation = __webpack_require__(29);
 	
 	var Page = function () {
 	  function Page(options) {
@@ -82,6 +83,10 @@ var app =
 	
 	    this._sorter = new Sorter({
 	      element: this._el.querySelector('[data-component="sorter"]')
+	    });
+	
+	    this._confirmation = new Confirmation({
+	      element: this._el.querySelector('[data-component="confirmation"]')
 	    });
 	
 	    this._catalogue = new PhoneCatalogue({
@@ -102,14 +107,21 @@ var app =
 	  _createClass(Page, [{
 	    key: '_onBackFromViewer',
 	    value: function _onBackFromViewer() {
-	      this._loadPhones();
+	      var query = this._filter.getValue();
+	
+	      this._loadPhones(query);
 	    }
 	  }, {
 	    key: '_onPhoneSelected',
 	    value: function _onPhoneSelected(event) {
 	      var phoneId = event.detail;
 	
-	      this._loadPhoneById(phoneId);
+	      this._confirmation.show();
+	      this._confirmation.on('submit', function () {
+	        this._loadPhoneById(phoneId);
+	
+	        this._confirmation.hide();
+	      }.bind(this));
 	    }
 	  }, {
 	    key: '_onFilterChanged',
@@ -238,9 +250,14 @@ var app =
 	  }
 	
 	  _createClass(Filter, [{
+	    key: 'getValue',
+	    value: function getValue() {
+	      return this._field.value;
+	    }
+	  }, {
 	    key: '_onFieldChange',
 	    value: function _onFieldChange() {
-	      this.trigger('filterChanged', this._field.value);
+	      this.trigger('filterChanged', this.getValue());
 	    }
 	  }]);
 	
@@ -1658,6 +1675,52 @@ var app =
 	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.phone : depth0)) != null ? stack1.images : stack1),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "</ul>";
 	},"useData":true});
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BaseComponent = __webpack_require__(4);
+	
+	var Confirmation = function (_BaseComponent) {
+	  _inherits(Confirmation, _BaseComponent);
+	
+	  function Confirmation(options) {
+	    _classCallCheck(this, Confirmation);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Confirmation).call(this, options.element));
+	
+	    _this.on('click', _this._onSubmit.bind(_this), '[data-element="submit"]');
+	    _this.on('click', _this._onReset.bind(_this), '[data-element="reset"]');
+	    return _this;
+	  }
+	
+	  _createClass(Confirmation, [{
+	    key: '_onSubmit',
+	    value: function _onSubmit() {
+	      this.trigger('submit');
+	    }
+	  }, {
+	    key: '_onReset',
+	    value: function _onReset() {
+	      this.trigger('reset');
+	    }
+	  }]);
+	
+	  return Confirmation;
+	}(BaseComponent);
+	
+	module.exports = Confirmation;
 
 /***/ }
 /******/ ]);
