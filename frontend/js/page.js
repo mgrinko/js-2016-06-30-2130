@@ -50,35 +50,21 @@ class Page {
   _onPhoneSelected(event) {
     let phoneId = event.detail;
 
-    this._loadPhoneById(phoneId)
-      .then(this._onPhoneLoaded.bind(this))
-      .catch(this._onError.bind(this));
+    let loadPhonePromise = this._loadPhoneById(phoneId);
 
     this._confirmation.show();
 
     this._confirmation.on('submit', function() {
-      this._isConfirmed = true;
-
-      if (this._loadedPhone) {
-        this._showPhone(this._loadedPhone);
-
-        this._isConfirmed = false;
-        this._loadedPhone = null;
-      }
+      loadPhonePromise
+        .then(this._onPhoneLoaded.bind(this))
+        .catch(this._onError.bind(this));
 
       this._confirmation.hide();
     }.bind(this));
   }
 
   _onPhoneLoaded(phoneDetails) {
-    this._loadedPhone = phoneDetails;
-
-    if (this._isConfirmed) {
-      this._showPhone(phoneDetails);
-
-      this._isConfirmed = false;
-      this._loadedPhone = null;
-    }
+    this._showPhone(phoneDetails);
   }
 
   _showPhone(phoneDetails) {
