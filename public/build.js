@@ -88,19 +88,23 @@ var app =
 	      element: this._el.querySelector('[data-component="phoneCatalogue"]')
 	    });
 	
-	    this._loadPhones();
-	
 	    this._viewer = new PhoneViewer({
 	      element: this._el.querySelector('[data-component="phoneViewer"]')
 	    });
 	
-	    this._viewer.hide();
-	
 	    this._catalogue.on('phoneSelected', this._onPhoneSelected.bind(this));
 	    this._filter.on('filterChanged', this._onFilterChanged.bind(this));
+	    this._viewer.on('back', this._onBackFromViewer.bind(this));
+	
+	    this._loadPhones();
 	  }
 	
 	  _createClass(Page, [{
+	    key: '_onBackFromViewer',
+	    value: function _onBackFromViewer() {
+	      this._loadPhones();
+	    }
+	  }, {
 	    key: '_onPhoneSelected',
 	    value: function _onPhoneSelected(event) {
 	      var phoneId = event.detail;
@@ -138,6 +142,9 @@ var app =
 	          }
 	
 	          this._catalogue.render(phones);
+	          this._catalogue.show();
+	
+	          this._viewer.hide();
 	        }.bind(this),
 	
 	        error: function (error) {
@@ -1603,7 +1610,10 @@ var app =
 	  function PhoneViewer(options) {
 	    _classCallCheck(this, PhoneViewer);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(PhoneViewer).call(this, options.element));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PhoneViewer).call(this, options.element));
+	
+	    _this.on('click', _this._onBackClick.bind(_this), '[data-element="backButton"]');
+	    return _this;
 	  }
 	
 	  _createClass(PhoneViewer, [{
@@ -1612,6 +1622,11 @@ var app =
 	      this._el.innerHTML = compiledTemplate({
 	        phone: phone
 	      });
+	    }
+	  }, {
+	    key: '_onBackClick',
+	    value: function _onBackClick() {
+	      this.trigger('back');
 	    }
 	  }]);
 	
