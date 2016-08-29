@@ -8,7 +8,7 @@ function accept(req, res) {
   if (req.url.indexOf('/data/') === 0) {
     setTimeout(function() {
       file.serve(req, res);
-    }, 1000);
+    }, 3000);
   } else {
     req.url = '/public' + req.url;
 

@@ -116,12 +116,56 @@ var app =
 	    value: function _onPhoneSelected(event) {
 	      var phoneId = event.detail;
 	
+	      this._loadPhoneById(phoneId);
+	
 	      this._confirmation.show();
+	
 	      this._confirmation.on('submit', function () {
-	        this._loadPhoneById(phoneId);
+	        this._isConfirmed = true;
+	
+	        if (this._loadedPhone) {
+	          this._showPhone(this._loadedPhone);
+	
+	          this._isConfirmed = false;
+	          this._loadedPhone = null;
+	        }
 	
 	        this._confirmation.hide();
 	      }.bind(this));
+	    }
+	  }, {
+	    key: '_onPhoneLoaded',
+	    value: function _onPhoneLoaded(phoneDetails) {
+	      this._loadedPhone = phoneDetails;
+	
+	      if (this._isConfirmed) {
+	        this._showPhone(phoneDetails);
+	
+	        this._isConfirmed = false;
+	        this._loadedPhone = null;
+	      }
+	    }
+	  }, {
+	    key: '_showPhone',
+	    value: function _showPhone(phoneDetails) {
+	      this._catalogue.hide();
+	
+	      this._viewer.render(phoneDetails);
+	      this._viewer.show();
+	    }
+	  }, {
+	    key: '_loadPhoneById',
+	    value: function _loadPhoneById(phoneId) {
+	      AjaxService.loadJSON('/data/' + phoneId + '.json', {
+	        method: 'GET',
+	        success: this._onPhoneLoaded.bind(this),
+	        error: this._onError.bind(this)
+	      });
+	    }
+	  }, {
+	    key: '_onError',
+	    value: function _onError(error) {
+	      console.error(error);
 	    }
 	  }, {
 	    key: '_onFilterChanged',
@@ -159,27 +203,7 @@ var app =
 	          this._viewer.hide();
 	        }.bind(this),
 	
-	        error: function (error) {
-	          console.error(error);
-	        }.bind(this)
-	      });
-	    }
-	  }, {
-	    key: '_loadPhoneById',
-	    value: function _loadPhoneById(phoneId) {
-	      AjaxService.loadJSON('/data/' + phoneId + '.json', {
-	        method: 'GET',
-	
-	        success: function (phoneDetails) {
-	          this._catalogue.hide();
-	
-	          this._viewer.render(phoneDetails);
-	          this._viewer.show();
-	        }.bind(this),
-	
-	        error: function (error) {
-	          console.error(error);
-	        }.bind(this)
+	        error: this._onError.bind(this)
 	      });
 	    }
 	  }]);
